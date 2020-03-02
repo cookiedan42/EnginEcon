@@ -1,3 +1,18 @@
+##todo
+'''
+--calculations--
+continual compounding on the interestTables
+
+--cash flow analysis--
+b/c analysis
+irr and mirr
+
+
+'''
+
+
+
+
 #some thing just don't need to be improved
 from numpy import irr,mirr,nper,rate
 
@@ -84,9 +99,9 @@ class CashFlow(object):
         if seq == None and seq2 == None:
             raise SyntaxError("No seq provided")
         elif seq2 == None:
-            seqs = [self.__validateSeq(seq2)]
+            seqs = [self.__validateSeq(seq)]
         elif seq == None:
-            seqs  = [self.__validateSeq(seq)]
+            seqs  = [self.__validateSeq(seq2)]
         else:
             seqs  = [self.__validateSeq(seq)
                     ,self.__validateSeq(seq2)]
@@ -129,7 +144,7 @@ class CashFlow(object):
     def __radd__(self,other):
         #needed for sum() to work
         return self
-    
+
     def get_PW(self):
         return sum([PF(self.rate,i)*(self.pos[i]+self.neg[i]) for i in range(len(self.pos))])
     def get_AW(self):
@@ -151,11 +166,16 @@ class CashFlow(object):
         newRate = (1+self.rate)**(1/newBase)-1
         return CashFlow(rate=newRate,seq=newPos,seq2=newNeg)
 
-    def draw(self,labels=False):
+    def draw(self,labels=False,merge=False):
         fig,ax = subplots()
         xAxis = range(len(self.pos))
-        up =    [None if i== 0 else i for i in self.pos]
-        down =  [None if i== 0 else i for i in self.neg]
+        if merge:
+            merge = [i+j for i,j in zip(self.pos,self.neg)]
+            up    = [i if i>0 else None for i in merge]
+            down  = [i if i<0 else None for i in merge]
+        else:
+            up    =  [None if i== 0 else i for i in self.pos]
+            down  =  [None if i== 0 else i for i in self.neg]
         ax.stem(xAxis,up,markerfmt="^"
         #,use_line_collection=True
         )
