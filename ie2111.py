@@ -7,7 +7,6 @@ continual compounding on the interestTables
 b/c analysis
 irr and mirr
 
-
 '''
 
 
@@ -15,13 +14,12 @@ irr and mirr
 
 #some thing just don't need to be improved
 from numpy import irr,mirr,nper,rate
-
+from matplotlib.pyplot import subplots
 ###Interest table stuff##################################################################3
 
 #Doing a start/end of period variable following numpy convention
 
-#A series
-
+#Helper Functions
 def _sanitize_rate(rate):
     if type(rate) == str and "%" in rate: 
         return float(rate.split("%")[0].strip())/100
@@ -30,32 +28,27 @@ def _sanitize_rate(rate):
     else:
         raise SyntaxError("invalid rate")
 
-
+#A series
 def FP(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return (1+i)**n
-
 def PF(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return (1+i)**-n
-
 def FA(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return ((1+i)**n-1)/i
-
 def PA(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return ((1+i)**n-1)/(i*(1+i)**n)
-
 def AF(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return FA(i,n)**-1
-
 def AP(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
@@ -66,22 +59,22 @@ def PG(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return (1/i)*(((1+i)**n-1)/(i*(1+i)**n) - (n/(1+i)**n))
-
 def AG(rate,n,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return 1/i - n/((1+i)**n-1)
 
+#Geometric Series
 def PGEO(rate,n,f,when=0):
     i = _sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return 1/(i-f) * (1-PF(i,n)*FP(f,n))
+
 ###########################################################################################################################
 def effectiveInterestConverter(interest = 0, old = 1, new = 1):
     #ratio between old and new interest rate
     return interest **(new/old)
 
-from matplotlib.pyplot import subplots
 class CashFlow(object):
     def __init__(self, rate=0.1,seq=None,seq2=None):
         #seq and seq2 to account for positive and negative flows
@@ -179,13 +172,15 @@ class CashFlow(object):
             for i in range(len(xAxis)):
                 if up[i]== None:
                     continue
-                ax.annotate(
-                    s=" $ {0:0.2f}".format(up[i]),
-                    xy=(xAxis[i],up[i]),
-                    rotation=90,
-                    ha = "right",
-                    va='bottom'
-                    )
+                # ax.annotate(
+                #     s=" $ {0:0.2f}".format(up[i]),
+                #     xy=(xAxis[i],up[i]/20),
+                #     rotation=90,
+                #     ha = "right",
+                #     va='bottom'
+                #     )
+                ax.text(xAxis[i],up[i]/20," $ {0:0.2f}".format(up[i]),
+                    rotation=90,ha = "right",va='bottom')
         try:
             ax.stem(xAxis,down,markerfmt="rv",linefmt='r',use_line_collection=True)
         except:
@@ -194,13 +189,15 @@ class CashFlow(object):
             for i in range(len(xAxis)):
                 if down[i] == None:
                     continue
-                ax.annotate(
-                    s="$ {0:0.2f} ".format(down[i]),
-                    xy=(xAxis[i],down[i]),
-                    rotation=90,
-                    ha='right',
-                    va='top'
-                    )
+                # ax.annotate(
+                #     s="$ {0:0.2f} ".format(down[i]),
+                #     xy=(xAxis[i],down[i]),
+                #     rotation=90,
+                #     ha='right',
+                #     va='top'
+                #     )
+                ax.text(xAxis[i],down[i]/20," $ {0:0.2f}".format(down[i]),
+                    rotation=90,ha = "right",va='top')
         #returning fig and subplot object for manual editing if desired
         return fig,ax
 
