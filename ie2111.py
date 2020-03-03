@@ -169,9 +169,10 @@ class CashFlow(object):
         else:
             up    =  [None if i== 0 else i for i in self.pos]
             down  =  [None if i== 0 else i for i in self.neg]
-        ax.stem(xAxis,up,markerfmt="^"
-        #,use_line_collection=True
-        )
+        try:
+            ax.stem(xAxis,up,markerfmt="^",use_line_collection=True)
+        except:
+            ax.stem(xAxis,up,markerfmt="^")
         if labels:
             for i in range(len(xAxis)):
                 if up[i]== None:
@@ -183,9 +184,10 @@ class CashFlow(object):
                     ha = "right",
                     va='bottom'
                     )
-        ax.stem(xAxis,down,markerfmt="rv",linefmt='r'
-        #,use_line_collection=True
-        )
+        try:
+            ax.stem(xAxis,down,markerfmt="rv",linefmt='r',use_line_collection=True)
+        except:
+             ax.stem(xAxis,down,markerfmt="rv",linefmt='r')
         if labels:
             for i in range(len(xAxis)):
                 if down[i] == None:
