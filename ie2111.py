@@ -144,6 +144,8 @@ class CashFlow(object):
         return self.get_PW() * AP(self.rate,len(self.pos)-1)
     def get_FW(self):
         return self.get_PW() * FP(self.rate,len(self.pos)-1)
+    def get_mergedSeries(self):
+        return [self.pos[i]+self.neg[i] for i in range(len(self.pos))]
     def set_rate(self,rate):
         #interest rate is per period
         self.rate = _sanitize_rate(rate)
@@ -224,7 +226,6 @@ def createGeo(rate = 0.1,start=1,f=0,length=0):
     return CashFlow(rate=rate,seq=seq)
 
 def createSingle(rate = 0.1,pos=0,value=0,length=0):
-
     seq = [0] *max(length+1,pos+1)
     seq[pos] = value
     return CashFlow(rate=rate,seq=seq)
