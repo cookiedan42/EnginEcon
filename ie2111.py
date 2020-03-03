@@ -186,8 +186,10 @@ class CashFlow(object):
                     )
         try:
             ax.stem(xAxis,down,markerfmt="rv",linefmt='r',use_line_collection=True)
+            print("tried")
         except:
              ax.stem(xAxis,down,markerfmt="rv",linefmt='r')
+             print("failed")
         if labels:
             for i in range(len(xAxis)):
                 if down[i] == None:
