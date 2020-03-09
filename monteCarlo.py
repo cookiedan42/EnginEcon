@@ -1,6 +1,9 @@
 import scipy.stats as st
 import numpy as np
 
+def discretePMF(values,probs,count):
+    return st.rv_discrete(values=(values,probs)).rvs(size=count)
+
 def uniform(lower,upper,count):
     return st.uniform.rvs(loc=lower,scale = upper-lower,size=count)
 
