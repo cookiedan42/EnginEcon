@@ -101,7 +101,7 @@ class CashFlow(object):
             newNeg += [i] + [0]*newBase-1
         newRate = (1+self.rate)**(1/newBase)-1
         return CashFlow(rate=newRate,seq=newPos,seq2=newNeg)
-'''
+    '''
     def IRR(self, other=False):
         if other:
             if len(self.pos) != len(other.pos):
@@ -125,7 +125,7 @@ class CashFlow(object):
             #comparative
             return "compare"
         return "self BC"
-'''
+    '''
     def draw(self,labels=False,merge=False):
         fig,ax = subplots()
         xAxis = range(len(self.pos))
