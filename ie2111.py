@@ -15,62 +15,10 @@ irr and mirr
 #some thing just don't need to be improved
 from numpy import irr,mirr,nper,rate
 from matplotlib.pyplot import subplots
-###Interest table stuff##################################################################3
+from interestTableFunctions import *
+from interestTableFunctions import _sanitize_rate
+import monteCarlo as mc
 
-#Doing a start/end of period variable following numpy convention
-
-#Helper Functions
-def _sanitize_rate(rate):
-    if type(rate) == str and "%" in rate: 
-        return float(rate.split("%")[0].strip())/100
-    elif type(rate) in (int,float):
-        return rate
-    else:
-        raise SyntaxError("invalid rate")
-
-#A series
-def FP(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return (1+i)**n
-def PF(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return (1+i)**-n
-def FA(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return ((1+i)**n-1)/i
-def PA(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return ((1+i)**n-1)/(i*(1+i)**n)
-def AF(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return FA(i,n)**-1
-def AP(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return PA(i,n)**-1
-
-#G series
-def PG(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return (1/i)*(((1+i)**n-1)/(i*(1+i)**n) - (n/(1+i)**n))
-def AG(rate,n,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return 1/i - n/((1+i)**n-1)
-
-#Geometric Series
-def PGEO(rate,n,f,when=0):
-    i = _sanitize_rate(rate)
-    n = (n-1 if when == 1 else n)
-    return 1/(i-f) * (1-PF(i,n)*FP(f,n))
-
-###########################################################################################################################
 def effectiveInterestConverter(interest = 0, old = 1, new = 1):
     #ratio between old and new interest rate
     return interest **(new/old)
@@ -153,7 +101,31 @@ class CashFlow(object):
             newNeg += [i] + [0]*newBase-1
         newRate = (1+self.rate)**(1/newBase)-1
         return CashFlow(rate=newRate,seq=newPos,seq2=newNeg)
-
+'''
+    def IRR(self, other=False):
+        if other:
+            if len(self.pos) != len(other.pos):
+                raise SyntaxError("mismatched study periods, cannot calculate IRR")
+            toCheck = [j-i for i,j in zip(self.get_mergedSeries,other.get_mergedSeries)]
+        else:
+            toCheck = self.get_mergedSeries()
+        #IRR(toCheck)
+            #comparative
+            return "compare"
+        return "self IRR"
+    def MIRR(self, other=False):  #DO from scratch
+        if other:
+            toCheck = [j-i for i,j in zip(self.get_mergedSeries,other.get_mergedSeries)]
+        else:
+            toCheck = self.get_mergedSeries()
+        #MIRR(toCheck)
+        return "MIRR"
+    def BC(self, other=False): #Do from scratch
+        if other:
+            #comparative
+            return "compare"
+        return "self BC"
+'''
     def draw(self,labels=False,merge=False):
         fig,ax = subplots()
         xAxis = range(len(self.pos))
