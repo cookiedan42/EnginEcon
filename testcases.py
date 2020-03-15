@@ -1,5 +1,6 @@
 #testCases to be created
 import ie2111 as ie
+from numpy import irr
 
 #interestTables
 assert round(ie.FP  (0.05,5),4) == 1.2763
@@ -32,3 +33,5 @@ assert (A+B).get_mergedSeries() == [-5,0,0,0,0,5]
 assert F.get_PW() == sum(F.get_mergedSeries()[i]*ie.PF(0.1,i) for i in range(len(F.get_mergedSeries())))
 assert F.get_AW() == F.get_PW() * ie.AP(0.1,5)
 assert F.get_FW() == F.get_PW() * ie.FP(0.1,5)
+assert (A+B).IRR() == irr((A+B).get_mergedSeries())
+assert G.IRR(A) == irr([g-a for g,a in zip(G.get_mergedSeries(),A.get_mergedSeries())])

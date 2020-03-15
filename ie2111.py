@@ -101,18 +101,16 @@ class CashFlow(object):
             newNeg += [i] + [0]*newBase-1
         newRate = (1+self.rate)**(1/newBase)-1
         return CashFlow(rate=newRate,seq=newPos,seq2=newNeg)
-    '''
+    
     def IRR(self, other=False):
         if other:
             if len(self.pos) != len(other.pos):
                 raise SyntaxError("mismatched study periods, cannot calculate IRR")
-            toCheck = [j-i for i,j in zip(self.get_mergedSeries,other.get_mergedSeries)]
+            toCheck = [j-i for i,j in zip(self.get_mergedSeries(),other.get_mergedSeries())]
         else:
             toCheck = self.get_mergedSeries()
-        #IRR(toCheck)
-            #comparative
-            return "compare"
-        return "self IRR"
+        return irr(toCheck)
+    '''
     def MIRR(self, other=False):  #DO from scratch
         if other:
             toCheck = [j-i for i,j in zip(self.get_mergedSeries,other.get_mergedSeries)]
