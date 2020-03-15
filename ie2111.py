@@ -13,7 +13,7 @@ irr and mirr
 
 
 #some thing just don't need to be improved
-from numpy import irr,mirr,nper,rate
+from numpy import irr,mirr,nper,rate,ndarray
 from matplotlib.pyplot import subplots
 from interestTableFunctions import *
 from interestTableFunctions import _sanitize_rate
@@ -53,7 +53,7 @@ class CashFlow(object):
     def __validateSeq(self,seq):
         if type(seq) not in (list,tuple):
             raise SyntaxError("invalid seq type")
-        if False in [type(i) in (float,int) for i in seq]:
+        if True in [type(i) in (float,int,ndarray) for i in seq]:
             raise SyntaxError("invalid values in seq")
         return (list(seq) if type(seq)==tuple else seq)
         
