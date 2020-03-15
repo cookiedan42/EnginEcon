@@ -53,7 +53,7 @@ class CashFlow(object):
     def __validateSeq(self,seq):
         if type(seq) not in (list,tuple):
             raise SyntaxError("invalid seq type")
-        if True in [type(i) in (float,int,ndarray) for i in seq]:
+        if False in [type(i) in (float,int,ndarray) for i in seq]:
             raise SyntaxError("invalid values in seq")
         return (list(seq) if type(seq)==tuple else seq)
         
