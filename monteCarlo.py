@@ -13,9 +13,20 @@ def uniform_int(lower,upper,count):
 def triangle(lower,mode,upper,count):
     return st.triang.rvs(loc=lower,c=(mode-lower)/(upper-lower),scale=upper-lower,size=count)
 
-def trunc_normal(mean,stdvar,lower,upper):
-    #need to check this one more
-    return False
+def normal(mean,stdvar,count):
+    return st.norm.rvs(loc=mean,scale=stdvar,size=count)
+
+def trunc_normal(mean,stdvar,lower,upper,count):
+    a,b = (lower - mean)/stdvar , (upper - mean)/stdvar
+    return st.truncnorm.rvs(a,b,loc=mean,scale=stdvar,size=count)
+
+def fixed(value,count):
+    return uniform(value,value,count)
+
+def lognormal(mean,stdvar,count):
+    a_mean = 0.5* np.log(mean**4/(stdvar**2+mean**2))
+    a_stdvar = np.sqrt(np.log(stdvar**2/mean**2+1))
+    return st.lognorm.rvs(s=a_stdvar,scale=np.exp(a_mean),size=count)
 
 class risk(object):
     #so basically this is a template for slotting in functions and data
