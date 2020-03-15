@@ -25,7 +25,7 @@ class risk(object):
         self.seq  = self.updateSeq()
     def updateSeq(self):
         self.errorCount = 0
-        variables = self.func.__code__.co_varnames
+        variables = self.func.__code__.co_varnames[:self.func.__code__.co_argcount]
         sortedvars =  tuple(tuple(self.data[k][i]for k in variables) for i in range(len(self.data[list(self.data.keys())[0]])))
         out = ()
         for i in sortedvars:
@@ -40,6 +40,14 @@ class risk(object):
     def updateFunc(self,func):
         self.func = func
         self.seq = self.updateSeq()
-    
     def stats(self):
         return st.describe(self.seq)
+
+    def tornado(self):
+        #pseduocode
+        # subplot
+        # for i in factors:
+        #     a = [func(all expected values, linspace 10 i)]
+        #     ax.plot(a)
+        # return fig,ax
+        return "This function is incomplete"
