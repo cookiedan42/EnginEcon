@@ -1,45 +1,31 @@
-##todo
 '''
+TODO
 --calculations--
 continual compounding on the interestTables
 
 --cash flow analysis--
 b/c analysis
-irr and mirr
-
+mirr
 '''
-
-
-
-
 #some thing just don't need to be improved
-from numpy import irr,mirr,nper,rate,ndarray
-from matplotlib.pyplot import subplots
+from numpy import irr #,mirr,nper,rate
 from interestTableFunctions import *
-from interestTableFunctions import _sanitize_rate
+from base import CashFlowBase
 import monteCarlo as mc
+import tax
 
-def effectiveInterestConverter(interest = 0, old = 1, new = 1):
-    #ratio between old and new interest rate
-    return interest **(new/old)
-
-class CashFlow(object):
-    def __init__(self,seq=None,seq2=None):
+class CashFlow(CashFlowBase):
+    def __init__(self,*seqs):
         #seq and seq2 to account for positive and negative flows
-        self.set_sequence(seq,seq2)
+        self.set_sequence(seqs)
 
-    def set_sequence(self,seq,seq2):
-        if seq == None and seq2 == None:
-            raise SyntaxError("No seq provided")
-        elif seq2 == None:
-            seqs = [self.__validateSeq(seq)]
-        elif seq == None:
-            seqs  = [self.__validateSeq(seq2)]
-        else:
-            seqs  = [self.__validateSeq(seq)
-                    ,self.__validateSeq(seq2)]
-        pos = [0]*len(seqs[0])
-        neg = [0]*len(seqs[0])
+    def set_sequence(self,seqs):
+        if len(seqs) == 0:
+            raise SyntaxError("No sequences provided")
+        seqs = [self._validateSeq(seq) for seq in seqs]
+        flowLen = max((len(i)for i in seqs))
+        pos = [0]*flowLen
+        neg = [0]*flowLen
         for seq in seqs:
             for i in range(len(seqs[0])):
                 if seq[i]>0:
@@ -49,39 +35,22 @@ class CashFlow(object):
         self.pos = pos
         self.neg = neg
 
-    def __validateSeq(self,seq):
-        if type(seq) not in (list,tuple):
-            raise SyntaxError("invalid seq type")
-        if False in [type(i) in (float,int,ndarray) for i in seq]:
-            raise SyntaxError("invalid values in seq")
-        return (list(seq) if type(seq)==tuple else seq)
         
-    def __equalize(self,a,b):
-        if len(a)<len(b):
-            a += [0]*(len(b)-len(a))
-        elif len(b)<len(a):
-            b += [0]*(len(a)-len(b))
-        return(a,b)
-    
     def __add__(self,other):
-        #adding two cash flows assuming they start at the same time
-        posA,posB = self.__equalize(self.pos,other.pos)
-        negA,negB = self.__equalize(self.neg,other.neg)
-        newPos = [i+j for i,j in zip(posA,posB)]
-        newNeg = [i+j for i,j in zip(negA,negB)]
-        return CashFlow(seq=newPos,seq2=newNeg)
+        newPos,newNeg = self._merge(self.pos,other.pos,self.neg,other.neg)
+        return CashFlow(newPos,newNeg)
     def __radd__(self,other):
         #needed for sum() to work
         return self
 
     def get_PW(self,rate):
-        return sum([PF(rate,i)*(self.pos[i]+self.neg[i]) for i in range(len(self.pos))])
+        return self._get_PW(self.pos,self.neg,rate)
     def get_AW(self,rate):
-        return self.get_PW(rate) * AP(rate,len(self.pos)-1)
+        return self._get_AW(self.pos,self.neg,rate)
     def get_FW(self,rate):
-        return self.get_PW(rate) * FP(rate,len(self.pos)-1)
+        return self._get_FW(self.pos,self.neg,rate)
     def get_mergedSeries(self):
-        return [self.pos[i]+self.neg[i] for i in range(len(self.pos))]
+        return self._get_mergedSeries(self.pos,self.neg)
 
     def rebase(self, newBase=1):
         if newBase<=1:
@@ -92,7 +61,7 @@ class CashFlow(object):
             newPos += [i] + [0]*newBase-1
         for i in self.neg:
             newNeg += [i] + [0]*newBase-1
-        return CashFlow(seq=newPos,seq2=newNeg)
+        return CashFlow(newPos,newNeg)
 
     def IRR(self, other=False):
         if other:
@@ -117,66 +86,36 @@ class CashFlow(object):
         return "self BC"
     '''
     def draw(self,labels=False,merge=False):
-        fig,ax = subplots()
-        xAxis = range(len(self.pos))
-        if merge:
-            merge = [i+j for i,j in zip(self.pos,self.neg)]
-            up    = [i if i>0 else None for i in merge]
-            down  = [i if i<0 else None for i in merge]
-        else:
-            up    =  [None if i== 0 else i for i in self.pos]
-            down  =  [None if i== 0 else i for i in self.neg]
-        try:# use_line_collection is not available in older version of matplotlib? idk
-            ax.stem(xAxis,up,markerfmt="^",use_line_collection=True)
-        except:
-            ax.stem(xAxis,up,markerfmt="^")
-        if labels:
-            for i in range(len(xAxis)):
-                if up[i]== None:
-                    continue
-                ax.text(xAxis[i],up[i]/20," $ {0:0.2f}".format(up[i]),
-                    rotation=90,ha = "right",va='bottom')
-        try:
-            ax.stem(xAxis,down,markerfmt="rv",linefmt='r',use_line_collection=True)
-        except:
-             ax.stem(xAxis,down,markerfmt="rv",linefmt='r')
-        if labels:
-            for i in range(len(xAxis)):
-                if down[i] == None:
-                    continue
-                ax.text(xAxis[i],down[i]/20," $ {0:0.2f}".format(down[i]),
-                    rotation=90,ha = "right",va='top')
-        #returning fig and subplot object for manual editing if desired
-        return fig,ax
+        return super().draw(self.pos,self.neg,labels=labels,merge=merge)
 
 #general instantiators
 def createA(pmt=0,length=0):
     #raise error if length<0
     seq = [0]+[pmt]*length
-    return CashFlow(seq=seq)
+    return CashFlow(seq)
 
 def createB(pmt=0,length=0):
     #raise Error if length <0
     seq = [pmt]*length+[0]
-    return CashFlow(seq=seq)
+    return CashFlow(seq)
                     
 def createG(g=0,length=0):
     seq = [0]+[i*g for i in range(length)]
-    return CashFlow(seq=seq)
+    return CashFlow(seq)
 
 def createGeo(start=1,f=0,length=0):
     seq = [0]+[start*(1+f)**i for i in range(length)]
-    return CashFlow(seq=seq)
+    return CashFlow(seq)
 
 def createSingle(pos=0,value=0,length=0):
     seq = [0] *max(length+1,pos+1)
     seq[pos] = value
-    return CashFlow(seq=seq)
+    return CashFlow(seq)
 
 def createRepeat(pattern=[0],length=0):
     seq = [0] + (1+length//len(pattern))*pattern
     seq = seq[:length+1]
-    return CashFlow(seq=seq)
+    return CashFlow(seq)
 
 # other art pro
 
@@ -193,5 +132,5 @@ def drawCashFlows(*args):
             elif series[i]<0:
                 neg[i] += series[i]
     print(pos,neg)
-    fig,ax = CashFlow(seq=pos,seq2=neg).draw()
+    fig,ax = CashFlow(pos,neg).draw()
     return fig,ax
