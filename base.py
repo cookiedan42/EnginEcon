@@ -10,10 +10,12 @@ class CashFlowBase(object):
         targetLen = max([len(i) for i in args])
         return tuple(i+[0]*(targetLen-len(i)) for i in args)
     def _validateSeq(self,seq):
+        
         if type(seq) not in (list,tuple):
             raise SyntaxError("invalid seq type")
-        if False in [type(i) in (float,int,ndarray) for i in seq]:
-            raise SyntaxError("invalid values in seq")
+        #give up on validating items, if you want to enter invalid let the future errors enlighten you
+        # if False in [type(i) in (float,int,ndarray,) for i in seq]:
+        #     raise SyntaxError("invalid values in seq")
         return (list(seq) if type(seq)==tuple else seq)
     def _merge(self,a1,a2,b1,b2):
         #merge cashflows (1,2) on series (a,b) to make c1 and c2
