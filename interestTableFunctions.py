@@ -1,11 +1,12 @@
 #helper functions
 def __sanitize_rate(rate):
-    if type(rate) == str and "%" in rate: 
-        return float(rate.split("%")[0].strip())/100
-    elif type(rate) in (int,float):
-        return rate
+    if type(rate) == str:
+        if "%" in rate: 
+            return float(rate.split("%")[0].strip())/100
+        else:
+            return float(rate)
     else:
-        raise SyntaxError("invalid rate")
+        return rate
 
 def effectiveInterestConverter(interest = 0, old = 1, new = 1):
     #ratio between old and new interest rate
