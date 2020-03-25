@@ -49,24 +49,19 @@ class AfterTaxCashFlow (CashFlowBase):
         )
         self.taxFunc = taxFunc #tax func should return tax amount, not negative for summing
         self.calculateFlows()
-    def set_taxRate(self,rate):
-        pass
-    def set_BTCF(self,BTCF):
-        pass
-    def add_BTCF(self,BTCF):
-        pass
-    def set_capdep(self,capdep):
-        pass
-    def add_capdep(self,capdep):
-        pass
-    def calculateFlows(self):
-        #calcuate taxable income
-        #calculate tax
-        #calculate summed Flows
-        #draw?
-        
+    # def set_taxRate(self,rate):
+    #     pass
+    # def set_BTCF(self,BTCF):
+    #     pass
+    # def add_BTCF(self,BTCF):
+    #     pass
+    # def set_capdep(self,capdep):
+    #     pass
+    # def add_capdep(self,capdep):
+    #     pass
+    def calculateFlows(self):        
         self.taxableIncome = [i+j-k for i,j,k in zip(self.BTCF_rev,self.BTCF_cos,self.dep)]
-        self.tax = [-self.taxFunc(i) for i in self.taxableIncome]
+        self.tax = [-self.taxFunc(i) for i in self.taxableIncome if i>0]
         self.ATCF_rev = self.BTCF_rev
         self.ATCF_cos = [i+j+k for i,j,k in zip(self.BTCF_cos,self.tax,self.cap)]
     
