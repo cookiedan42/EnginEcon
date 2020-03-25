@@ -61,7 +61,7 @@ class AfterTaxCashFlow (CashFlowBase):
     #     pass
     def calculateFlows(self):        
         self.taxableIncome = [i+j-k for i,j,k in zip(self.BTCF_rev,self.BTCF_cos,self.dep)]
-        self.tax = [-self.taxFunc(i) for i in self.taxableIncome if i>0]
+        self.tax = [-self.taxFunc(i) if i>0 else 0 for i in self.taxableIncome ]
         self.ATCF_rev = self.BTCF_rev
         self.ATCF_cos = [i+j+k for i,j,k in zip(self.BTCF_cos,self.tax,self.cap)]
     
