@@ -1,5 +1,5 @@
 #depreciation
-from base import CashFlowBase
+from .base import CashFlowBase
 from matplotlib.pyplot import subplots
 def straightLine(B,S,N,i):
     if N == 0:

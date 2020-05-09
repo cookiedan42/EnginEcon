@@ -1,6 +1,6 @@
 from matplotlib.pyplot import subplots
 from numpy import ndarray
-from interestTableFunctions import *
+from .interestTableFunctions import *
 class CashFlowBase(object):
     def __init__(self):
         pass

@@ -98,3 +98,30 @@ class risk(object):
         self.seq = self.updateSeq()
     def stats(self):
         return st.describe(self.seq)
+
+    # return st.percentile updated version?
+    # def valueAtRisk(self,percentile):
+    #     if type(percentile) == str:
+    #         percentile = float(percentile.split('%')[0])
+    #     return st.scoreatpercentile(self.seq,100-percentile)
+
+    # def upsidePotential(self,value):
+    #     return 1 - st.percentileofscore(self.seq,value,kind='strict')
+
+    # def downsideRisk(self):
+    #     st.percentileofscore(self.seq,0,kind='weak')
+
+    # def tornado(self):
+    #     if seq:
+    #         seqStats = st.describe(seq)
+    #         maxS,minS = seqStats.minmax
+    #         meanS = seqStats.mean
+    #     else:
+    #         pass
+        #pseduocode
+        # subplot
+        # for i in factors:
+        #     a = [func(all expected values, linspace 10 i)]
+        #     ax.plot(a)
+        # # return fig,ax
+        # return "This function is incomplete"

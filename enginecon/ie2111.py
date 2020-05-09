@@ -9,10 +9,10 @@ mirr
 '''
 #some thing just don't need to be improved
 from numpy import irr #,mirr,nper,rate
-from interestTableFunctions import *
-from base import CashFlowBase
-import monteCarlo as mc
-import tax
+from .interestTableFunctions import *
+from .base import CashFlowBase
+
+from . import tax
 
 class CashFlow(CashFlowBase):
     def __init__(self,*seqs):
