@@ -18,9 +18,9 @@ def uniform(lower,upper,count=None):
 
 def uniform_int(lower,upper,count=None):
     if count:
-        return st.randint(low=lower,high=upper).rvs(size=count)
+        return st.randint(low=lower,high=upper+1).rvs(size=count)
     else:
-        return st.randint(low=lower,high=upper)
+        return st.randint(low=lower,high=upper+1)
 
 def triangle(lower,mode,upper,count=None):
     if count:
@@ -98,12 +98,3 @@ class risk(object):
         self.seq = self.updateSeq()
     def stats(self):
         return st.describe(self.seq)
-
-    def tornado(self):
-        #pseduocode
-        # subplot
-        # for i in factors:
-        #     a = [func(all expected values, linspace 10 i)]
-        #     ax.plot(a)
-        # return fig,ax
-        return "This function is incomplete"
