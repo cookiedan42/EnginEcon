@@ -97,7 +97,6 @@ def PG(rate,n,when=0):
     return (1/i)*(((1+i)**n-1)/(i*(1+i)**n) - (n/(1+i)**n))
 
 def AG(rate,n,when=0):
-
     '''returns annual value given g value for g series
     
     Parameters:
@@ -110,6 +109,13 @@ def AG(rate,n,when=0):
 
 #Geometric Series
 def PGEO(rate,n,f,when=0):
+    '''returns present value given n and f values for geometric series
+    
+    Parameters:
+    rate (str or str% or float )    : interest rate as 0.0x or x%
+    n                               : time periods
+    f                               : rate of growth of geometric series -> K(n+1) = K*(1+f)
+    when                            : 0 if end of period, 1 if start of period'''
     i = __sanitize_rate(rate)
     n = (n-1 if when == 1 else n)
     return 1/(i-f) * (1-PF(i,n)*FP(f,n))
