@@ -4,7 +4,8 @@ from .interestTableFunctions import *
 class CashFlowBase(object):
     def __init__(self):
         pass
-        #can be either capital depreciation or posneg
+        # for overriding
+        # can be either capital depreciation or posneg
     
     def _equalize(self,*args):
         targetLen = max([len(i) for i in args])
