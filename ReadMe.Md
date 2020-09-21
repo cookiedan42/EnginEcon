@@ -1,3 +1,5 @@
+install using pip install enginecon
+
 This module provides    
 Interest table calculators in form of   
 
