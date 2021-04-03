@@ -1,0 +1,5 @@
+Use interface patterns to standardise things
+
+Use type hints to help
+
+breakout current monolithic flow object into smaller sections
